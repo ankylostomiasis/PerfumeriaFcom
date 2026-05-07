@@ -1,0 +1,234 @@
+    {% extends "layout.html" %}
+    {% block title %}Perfumeria Luxury | Fragancias originales{% endblock %}
+
+    {% block content %}
+    <section class="hero-luxury mb-5" data-reveal>
+        <div class="row align-items-center g-4 g-xl-5">
+            <div class="col-12 col-lg-6">
+                <div class="hero-copy">
+                    <span class="section-pill">Perfumeria Luxury | Venta directa por WhatsApp</span>
+                    <h1 class="hero-title">Fragancias originales con una presencia que inspira confianza.</h1>
+                    <p class="hero-description">
+                        Una vitrina limpia, rapida y pensada para convertir mejor desde Instagram, WhatsApp y cualquier visita organica. El cliente encuentra, compara y pide sin friccion.
+                    </p>
+
+                    <div class="hero-actions">
+                        <a href="#productos" class="btn action-btn action-btn-light">Ver destacados</a>
+                        <a href="{% url 'whatsapp_link' %}" class="btn action-btn action-btn-ghost">
+                            <i class="bi bi-whatsapp"></i>
+                            <span>Ir al pedido</span>
+                        </a>
+                    </div>
+
+                    <div class="hero-metrics">
+                        <div class="metric-card">
+                            <strong>{{ productos|length }}</strong>
+                            <span>referencias publicadas</span>
+                        </div>
+                        <div class="metric-card">
+                            <strong>{{ categorias|length }}</strong>
+                            <span>categorias activas</span>
+                        </div>
+                        <div class="metric-card">
+                            <strong>{{ in_stock_count }}</strong>
+                            <span>productos con stock</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="hero-visual">
+                    <div class="hero-frame">
+                        {% if hero_product and hero_product.picture %}
+                            <img src="{{ hero_product.picture.url }}" alt="{{ hero_product.name }}" class="hero-image">
+                        {% else %}
+                            <div class="hero-image-placeholder">
+                                <i class="bi bi-stars"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="floating-card floating-card-top">
+                        <span class="floating-label">Experiencia</span>
+                        <strong>Rapida, limpia y lista para vender</strong>
+                    </div>
+
+                    <div class="floating-card floating-card-bottom">
+                        <span class="floating-label">Canal principal</span>
+                        <strong>@fcom_lroma</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="trust-strip mb-5">
+        <div class="row g-3">
+            <div class="col-12 col-md-4" data-reveal>
+                <article class="trust-card">
+                    <i class="bi bi-patch-check"></i>
+                    <div>
+                        <h3>Marca mas creible</h3>
+                        <p>La pagina ya no habla de si misma. Habla del producto, del beneficio y de la compra, que es lo que realmente ayuda a vender.</p>
+                    </div>
+                </article>
+            </div>
+            <div class="col-12 col-md-4" data-reveal>
+                <article class="trust-card">
+                    <i class="bi bi-grid-1x2"></i>
+                    <div>
+                        <h3>Catalogo mejor ordenado</h3>
+                        <p>Categorias claras, tarjetas consistentes y llamadas a la accion visibles para que el recorrido no se sienta improvisado.</p>
+                    </div>
+                </article>
+            </div>
+            <div class="col-12 col-md-4" data-reveal>
+                <article class="trust-card">
+                    <i class="bi bi-phone"></i>
+                    <div>
+                        <h3>Hecha para celular</h3>
+                        <p>Los bloques, botones y espacios estan ajustados para que la experiencia se mantenga premium incluso en pantalla pequena.</p>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-block mb-5" id="catalogo" data-reveal>
+        <div class="section-heading">
+            <div>
+                <span class="section-eyebrow">Colecciones</span>
+                <h2 class="section-title">Explora por categoria</h2>
+            </div>
+            <p class="section-copy">Marcas conocidas, productos interesantes, todo al alcance de un click.</p>
+        </div>
+
+        <div class="carousel-shell">
+            <button id="prev-cat" class="carousel-btn" type="button" aria-label="Categorias anteriores">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+
+            <div id="category-carousel" class="carousel-track" data-carousel>
+                {% for categoria in categorias %}
+                <article class="category-card">
+                    <span class="card-index">{{ forloop.counter|stringformat:"02d" }}</span>
+                    <h3>{{ categoria.name }}</h3>
+                    <p>Descubre una seleccion curada para responder mas rapido a lo que busca cada cliente.</p>
+                    <button type="button" class="btn action-btn action-btn-light action-btn-sm" onclick="cargarCategoria({{ categoria.id }})">
+                        Ver seleccion
+                    </button>
+                </article>
+                {% empty %}
+                <article class="category-card">
+                    <span class="card-index">00</span>
+                    <h3>Sin categorias</h3>
+                    <p>Agrega categorias para ordenar mejor el catalogo y mejorar la navegacion.</p>
+                </article>
+                {% endfor %}
+            </div>
+
+            <button id="next-cat" class="carousel-btn" type="button" aria-label="Siguientes categorias">
+                <i class="bi bi-chevron-right"></i>
+            </button>
+        </div>
+    </section>
+
+    <section class="section-panel mb-5" data-reveal>
+        <div class="section-heading section-heading-tight">
+            <div>
+                <span class="section-eyebrow">Vista dinamica</span>
+                <h2 class="section-title">Resultados por categoria</h2>
+            </div>
+            <p class="section-copy">Tambien puedes usar el buscador superior para filtrar productos sin salir del inicio.</p>
+        </div>
+
+        <div id="product-container" class="row g-3">
+            <div class="col-12">
+                <div class="empty-state">
+                    <i class="bi bi-hand-index-thumb"></i>
+                    <p>Selecciona una categoria para ver los productos aqui mismo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-block mb-5" id="productos" data-reveal>
+        <div class="section-heading">
+            <div>
+                <span class="section-eyebrow">Destacados</span>
+                <h2 class="section-title">Fragancias para mostrar primero</h2>
+            </div>
+            <p class="section-copy">Fotos grandes, precio visible y acciones claras para convertir mejor desde el primer scroll.</p>
+        </div>
+
+        <div class="carousel-shell">
+            <button id="prev-prod" class="carousel-btn" type="button" aria-label="Productos anteriores">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+
+            <div id="products-carousel" class="carousel-track" data-carousel>
+                {% for producto in featured_products %}
+                <a href="{% url 'product_detail' producto.id %}" class="product-link-card">
+                    <article class="product-card carousel-product-card">
+                        <div class="product-media">
+                        {% if producto.picture %}
+                            <img src="{{ producto.picture.url }}" alt="{{ producto.name }}" class="card-img-top">
+                        {% else %}
+                            <div class="product-placeholder">
+                                <i class="bi bi-stars"></i>
+                            </div>
+                        {% endif %}
+                        </div>
+                    <div class="product-body">
+                        <div class="product-badges">
+                            <span>{{ producto.category.name|default:"Fragancia" }}</span>
+                            {% if producto.stock > 0 %}
+                            <span class="badge-available">Disponible</span>
+                            {% else %}
+                            <span class="badge-soldout">Agotado</span>
+                            {% endif %}
+                        </div>
+
+                        <h3>{{ producto.name }}</h3>
+                        <p class="product-description">{{ producto.description|truncatechars:88 }}</p>
+
+                        <div class="product-footer">
+                            <span class="product-price">${{ producto.price }}</span>
+                            {% if producto.stock > 0 %}
+                            <button type="button" class="btn action-btn action-btn-outline action-btn-sm" onclick="event.stopPropagation(); addToCart({{ producto.id }})">
+                                Agregar
+                            </button>
+                            {% else %}
+                            <a href="{% url 'ask_for_stock' %}?product_id={{ producto.id }}" class="btn action-btn action-btn-outline action-btn-sm" onclick="event.stopPropagation();">
+                                Consultar
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    </article>
+                </a>
+                {% empty %}
+                <div class="empty-state w-100">
+                    <i class="bi bi-stars"></i>
+                    <p>No hay productos disponibles todavia.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <button id="next-prod" class="carousel-btn" type="button" aria-label="Siguientes productos">
+                <i class="bi bi-chevron-right"></i>
+            </button>
+        </div>
+    </section>
+
+    <section class="cta-panel text-center" data-reveal>
+        <span class="section-pill section-pill-dark">Proceso de compra claro y directo</span>
+        <h2 class="cta-title">Lista para captar interes y cerrarlo por WhatsApp.</h2>
+        <p class="cta-copy">La experiencia ahora prioriza confianza, claridad visual y menos friccion al momento de pedir.</p>
+        <a href="{% url 'whatsapp_link' %}" class="btn action-btn action-btn-light action-btn-lg">
+            <i class="bi bi-whatsapp"></i>
+            <span>Continuar con el pedido</span>
+        </a>
+    </section>
+    {% endblock %}

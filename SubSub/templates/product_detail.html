@@ -1,0 +1,114 @@
+{% extends "layout.html" %}
+{% block title %}{{ product.name }} | Perfumeria Luxury{% endblock %}
+{% block meta_description %}{{ product.name }} en Perfumeria Luxury. Compra directa por WhatsApp, ficha clara y una experiencia premium para convertir mejor.{% endblock %}
+
+{% block content %}
+<section class="detail-section mb-5">
+    <div class="row g-4 g-xl-5 align-items-start">
+        <div class="col-12 col-lg-6" data-reveal>
+            <div class="detail-media-shell">
+                {% if product.picture %}
+                    <img src="{{ product.picture.url }}" alt="{{ product.name }}" class="detail-main-image">
+                {% else %}
+                    <div class="detail-main-placeholder">
+                        <i class="bi bi-stars"></i>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-6" data-reveal>
+            <div class="detail-panel">
+                <span class="section-pill section-pill-detail">Ficha del producto</span>
+                <h1 class="detail-title">{{ product.name }}</h1>
+
+                <div class="product-badges mb-3">
+                    <span>{{ product.category.name|default:"Fragancia" }}</span>
+                    {% if product.stock > 0 %}
+                    <span class="badge-available">En stock</span>
+                    {% else %}
+                    <span class="badge-soldout">Agotado</span>
+                    {% endif %}
+                </div>
+
+                <p class="detail-price">${{ product.price }}</p>
+                <p class="detail-description">{{ product.description }}</p>
+
+                <div class="detail-highlights">
+                    <div><i class="bi bi-patch-check"></i><span>Presentacion premium para una calidad inigualable</span></div>
+                    <div><i class="bi bi-whatsapp"></i><span>Pedido listo para continuar por WhatsApp</span></div>
+                    <div><i class="bi bi-shield-check"></i><span>Proceso simple, rapido y confiable</span></div>
+                </div>
+
+                {% if product.stock > 0 %}
+                <div class="detail-actions">
+                    <button class="btn action-btn action-btn-dark" type="button" onclick="addToCart({{ product.id }})">
+                        <i class="bi bi-bag-plus"></i>
+                        <span>Anadir al carrito</span>
+                    </button>
+                    <a href="{% url 'whatsapp_link' %}" class="btn action-btn action-btn-outline">
+                        <i class="bi bi-whatsapp"></i>
+                        <span>Comprar ahora</span>
+                    </a>
+                </div>
+                <p class="detail-stock-note">Disponibles ahora: {{ product.stock }}</p>
+                {% else %}
+                <div class="detail-actions">
+                    <a href="{% url 'ask_for_stock' %}?product_id={{ product.id }}" class="btn action-btn action-btn-dark">
+                        <i class="bi bi-chat-dots"></i>
+                        <span>Consultar disponibilidad</span>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-block" data-reveal>
+    <div class="section-heading">
+        <div>
+            <span class="section-eyebrow">Relacionados</span>
+            <h2 class="section-title">Mas opciones para seguir explorando</h2>
+        </div>
+        <p class="section-copy">Productos relacionados para extender la navegacion sin romper el ritmo de compra.</p>
+    </div>
+
+    <div class="row g-3 g-lg-4">
+        {% for p in related_products %}
+        <div class="col-6 col-md-4 col-lg-3">
+            <article class="product-card grid-product-card" onclick="verProducto('{% url 'product_detail' p.id %}')">
+                <div class="product-media">
+                    {% if p.picture %}
+                        <img src="{{ p.picture.url }}" alt="{{ p.name }}" class="card-img-top">
+                    {% else %}
+                        <div class="product-placeholder">
+                            <i class="bi bi-stars"></i>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="product-body">
+                    <div class="product-badges">
+                        <span>{{ p.category.name|default:"Fragancia" }}</span>
+                    </div>
+                    <h3>{{ p.name }}</h3>
+                    <p class="product-description">{{ p.description|truncatechars:72 }}</p>
+                    <div class="product-footer">
+                        <span class="product-price">{{ p.price }}Bs</span>
+                        <span class="mini-link">Ver detalle</span>
+                    </div>
+                </div>
+            </article>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="empty-state">
+                <i class="bi bi-stars"></i>
+                <p>No hay productos relacionados disponibles por ahora.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

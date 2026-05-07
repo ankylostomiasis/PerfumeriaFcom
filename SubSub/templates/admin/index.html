@@ -1,0 +1,23 @@
+{% extends "admin/index.html" %}
+
+{% block content %}
+
+<div style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 10px;">
+    <h2>🛠️ Accesos rápidos</h2>
+
+    <a href="{% url 'admin:catalog-tools' %}" style="
+        display: inline-block;
+        margin-top: 10px;
+        padding: 10px 15px;
+        background: #2c7be5;
+        color: white;
+        border-radius: 6px;
+        text-decoration: none;
+    ">
+        Ir a Catalog Tools
+    </a>
+</div>
+
+{{ block.super }}
+
+{% endblock %}

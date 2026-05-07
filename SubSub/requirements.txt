@@ -1,0 +1,16 @@
+# Framework principal
+Django>=4.2,<5.0
+
+# Para manejar imágenes (campo ImageField)
+Pillow>=10.0.0
+
+# Slugify para generar slugs automáticos
+python-slugify>=8.0.4
+
+# Para PostgreSQL (puedes comentar si solo usarás SQLite)
+psycopg2-binary>=2.9.9
+
+# Opcional: mejorar rendimiento con compresión y almacenamiento estático
+django-compressor>=4.4
+whitenoise>=6.5.0
+    

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block meta_description %}Perfumeria Luxury, una tienda de fragancias originales con compra rapida por WhatsApp y experiencia premium en cualquier dispositivo.{% endblock %}">
+    <title>{% block title %}Perfumeria Luxury{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="{% static 'styles.css' %}" rel="stylesheet">
+</head>
+<body class="luxury-body">
+
+<nav class="navbar navbar-expand-lg navbar-dark lux-navbar sticky-top">
+    <div class="container">
+        <a class="navbar-brand luxury-brand" href="{% url 'homepage' %}" aria-label="Ir al inicio de Perfumeria Luxury">
+            <div class="brand-logo-wrapper">
+        <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo-img">
+    </div>
+            <span class="brand-copy">
+                <span class="brand-handle">@fcom_lroma</span>
+                <span class="brand-title">Perfumeria Luxury</span>
+            </span>
+        </a>
+
+        <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Abrir menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div id="nav" class="collapse navbar-collapse">
+            <form id="search_form" class="d-flex ms-auto w-100 w-lg-auto luxury-search-form" action="{% url 'search_results' %}" method="get" onsubmit="return this.q.value.trim() !== ''; ">
+                <i class="bi bi-search search-ornament" aria-hidden="true"></i>
+                <input class="form-control search-input" id="search-bar" type="search" name="q" placeholder="Buscar por nombre o descripcion" aria-label="Buscar fragancias">
+                <button class="btn search-submit" type="submit" aria-label="Buscar">
+                    <i class="bi bi-arrow-right"></i>
+                </button>
+            </form>
+
+            <a class="cart-btn ms-lg-3" data-bs-toggle="offcanvas" href="#offcanvasCart" role="button" aria-controls="offcanvasCart" aria-label="Abrir carrito">
+                <i class="bi bi-bag-heart"></i>
+                <span class="cart-btn-text">Tu pedido</span>
+                <span id="cart-count" class="cart-count-pill">{{ cart_total_quantity|default:0 }}</span>
+            </a>
+        </div>
+    </div>
+</nav>
+
+<main class="site-main container py-4 py-lg-5">
+    {% if message %}
+    <div class="alert luxury-alert mt-4 rounded-4" id="message" role="alert">
+        {{ message }}
+    </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer py-4">
+    <div class="container footer-grid">
+        <div>
+            <p class="footer-note mb-1">Perfumeria Luxury</p>
+            <p class="footer-copy mb-0">Fragancias originales, atencion directa y una compra guiada para convertir mejor.</p>
+        </div>
+        <div class="footer-meta">
+            <span>Instagram: @fcom_lroma</span>
+            <span>Checkout: WhatsApp directo</span>
+        </div>
+    </div>
+</footer>
+
+<div class="offcanvas offcanvas-end lux-offcanvas" tabindex="-1" id="offcanvasCart" aria-labelledby="offcanvasCartTitle">
+    <div class="offcanvas-header">
+        <div>
+            <p class="offcanvas-kicker mb-1">Pedido listo para WhatsApp</p>
+            <h5 class="offcanvas-title mb-0" id="offcanvasCartTitle">Tu carrito</h5>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+    </div>
+
+    <div class="offcanvas-body">
+        <ul id="cart-items" class="list-group cart-list mb-3">
+            {% if cart_items %}
+                {% for item in cart_items %}
+                <li class="list-group-item cart-item">
+                    <div class="cart-thumb">
+                        {% if item.product.picture %}
+                        <img src="{{ item.product.picture.url }}" alt="{{ item.name }}" class="cart-item-image">
+                        {% else %}
+                        <div class="cart-thumb-placeholder">
+                            <i class="bi bi-stars"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="cart-item-main">
+                        <strong class="cart-item-title">{{ item.name }}</strong>
+                        <span class="cart-item-meta">Detalle listo para confirmar</span>
+
+                        <div class="cart-qty-controls">
+                            <button class="btn qty-btn" type="button" onclick="decreaseQuantity({{ item.product.id|default:item.id }})" aria-label="Reducir cantidad">
+                                <i class="bi bi-dash-lg"></i>
+                            </button>
+                            <span class="qty-value">{{ item.quantity }}</span>
+                            <button class="btn qty-btn" type="button" onclick="increaseQuantity({{ item.product.id|default:item.id }})" aria-label="Aumentar cantidad">
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="cart-item-side">
+                        <span class="cart-price">{{ item.total_price|default:0|floatformat:2 }} Bs.</span>
+                        <button class="btn remove-btn" type="button" onclick="removeFromCart({{ item.product.id|default:item.id }})" aria-label="Eliminar producto">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                </li>
+                {% endfor %}
+            {% else %}
+                <li class="list-group-item cart-empty-state">
+                    <i class="bi bi-bag-heart"></i>
+                    <span>Tu carrito esta vacio por ahora.</span>
+                </li>
+            {% endif %}
+        </ul>
+
+        <div class="cart-summary">
+            <div class="d-flex justify-content-between align-items-center fw-semibold mb-2">
+                <span>Total</span>
+                <span id="cart-total">{{ cart_total_price|default:0|floatformat:2 }} Bs.</span>
+            </div>
+            <p class="cart-summary-copy">Enviaremos el detalle del pedido a WhatsApp para cerrar la compra rapidamente.</p>
+            <a href="{% url 'whatsapp_link' %}" id="btn-pago" class="btn checkout-btn w-100">
+                <i class="bi bi-whatsapp"></i>
+                <span>Finalizar por WhatsApp</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'script.js' %}" defer></script>
+</body>
+</html>

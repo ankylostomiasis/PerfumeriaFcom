@@ -1,0 +1,96 @@
+{% extends "layout.html" %}
+{% block title %}Busqueda | Perfumeria Luxury{% endblock %}
+
+{% block content %}
+<section class="section-panel mb-4" data-reveal>
+    <span class="section-pill section-pill-detail">Busqueda</span>
+    
+    <h1 class="results-title">
+        {% if query %}
+            Resultados para "{{ query }}"
+        {% else %}
+            Catalogo completo
+        {% endif %}
+    </h1>
+
+    <p class="section-copy mb-0">
+        {% if products %}
+            Encontramos {{ products|length }} opcion{{ products|length|pluralize:"es" }} para seguir explorando.
+        {% else %}
+            No encontramos coincidencias exactas. Puedes volver al inicio o ajustar la busqueda.
+        {% endif %}
+    </p>
+</section>
+
+{% if products %}
+<section class="section-block">
+    <div class="row g-3 g-lg-4">
+
+        {% for product in products %}
+        <div class="col-6 col-md-4 col-lg-3 d-flex" data-reveal>
+
+            <a href="{% url 'product_detail' product.id %}" class="product-link-card w-100">
+
+                <article class="product-card grid-product-card w-100">
+
+                    <!-- MEDIA -->
+                    <div class="product-media">
+                        {% if product.picture %}
+                            <img src="{{ product.picture.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <div class="product-placeholder">
+                                <i class="bi bi-stars"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- BODY -->
+                    <div class="product-body">
+
+                        <div class="product-badges">
+                            <span>{{ product.category.name|default:"Fragancia" }}</span>
+
+                            {% if product.stock > 0 %}
+                                <span class="badge-available">Disponible</span>
+                            {% else %}
+                                <span class="badge-soldout">Agotado</span>
+                            {% endif %}
+                        </div>
+
+                        <h3>{{ product.name }}</h3>
+
+                        <p class="product-description">
+                            {{ product.description|truncatechars:78 }}
+                        </p>
+
+                        <div class="product-footer">
+                            <span class="product-price">${{ product.price }}</span>
+
+                            <!-- 🔥 CAMBIO CLAVE: NO más <a> dentro de <a> -->
+                            <button 
+                                class="btn action-btn action-btn-outline action-btn-sm"
+                                onclick="event.stopPropagation(); window.location.href='{% url 'product_detail' product.id %}';">
+                                Ver
+                            </button>
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </a>
+
+        </div>
+        {% endfor %}
+
+    </div>
+</section>
+{% else %}
+<section class="section-block">
+    <div class="empty-state">
+        <i class="bi bi-search"></i>
+        <p>No se encontraron resultados para <strong>{{ query }}</strong>.</p>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

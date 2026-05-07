@@ -1,0 +1,107 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+
+<h1 style="margin-bottom: 25px;">🛠️ Herramientas de Catálogo</h1>
+
+<p style="margin-bottom: 30px; color: #666;">
+    Panel interno para automatizar tareas del catálogo (uso personal).
+</p>
+
+<div style="display: flex; flex-direction: column; gap: 25px; max-width: 600px;">
+
+    <!-- =========================
+         AUTOCATEGORIZAR
+    ========================== -->
+    <div style="padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+        <h3>🔥 Autocategorizar productos</h3>
+        <p style="color: #666;">
+            Asigna automáticamente categorías según el nombre del producto.
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="auto_categorize" value="1">
+
+            <button type="submit" style="
+                padding: 10px 15px;
+                background: #2c7be5;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+            ">
+                Ejecutar autocategorización
+            </button>
+        </form>
+    </div>
+
+    <!-- =========================
+         AUTO FOTOS (DESACTIVADO)
+    ========================== -->
+    <div style="padding: 20px; border: 1px solid #ddd; border-radius: 10px; opacity: 0.7;">
+        <h3>📸 Auto fotos (desactivado)</h3>
+        <p style="color: #666;">
+            Esta función se mantiene como comando para evitar ejecuciones pesadas desde el admin.
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="auto_photos" value="1">
+
+            <button type="submit" style="
+                padding: 10px 15px;
+                background: #999;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: not-allowed;
+            " disabled>
+                Solo disponible por comando
+            </button>
+        </form>
+    </div>
+
+    <!-- =========================
+         PRECIOS
+    ========================== -->
+    <div style="padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+        <h3>💰 Ajuste de precios</h3>
+        <p style="color: #666;">
+            Ejemplos: <b>+10%</b>, <b>-5%</b>, <b>+3</b>, <b>-2</b>
+        </p>
+
+        <form method="post" style="display: flex; gap: 10px;">
+            {% csrf_token %}
+
+            <input
+                type="text"
+                name="value"
+                placeholder="Ej: +10% o -5"
+                style="
+                    flex: 1;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #ccc;
+                "
+            >
+
+            <input type="hidden" name="update_prices" value="1">
+
+            <button type="submit" style="
+                padding: 10px 15px;
+                background: #28a745;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+            ">
+                Aplicar
+            </button>
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}
