@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'Catalogo',
     'cloudinary_storage',
     'cloudinary',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
